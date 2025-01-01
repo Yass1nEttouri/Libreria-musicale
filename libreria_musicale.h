@@ -22,16 +22,55 @@ struct song{
     minutes durata;
 };
 
+/* 
+Comment about functions implemented
+
+libreria : array of songs representing a library
+size: size of array starting from 0
+ */
+
+/* 
+func used to add a new song to the library 
+size : current size of libreria + 1 -> index of the next song which needs to be added
+ */
 canzone* add_new_song(canzone* libreria,unsigned int* size); // OK
-canzone *delete_song(canzone* libreria,unsigned int* size, const char *title); // fix logica
+
+canzone* delete_song(canzone* libreria,unsigned int* size, const char *title); // fix logica
+
+/* 
+func used to rate a specific song in libreria given the title of the song
+title: title of the song to add a rating on
+ */
 canzone* rate_song(canzone* libreria, unsigned int size, const char *title); // OK
+
 bool import_library(canzone* libreria, unsigned int* size, const char* file_name); // fix logica
-bool export_library(canzone* libreria, unsigned int size,const char* file_name);
+bool export_library(canzone* libreria, unsigned int size,const char* file_name); // review
+
+/* 
+simple func to print the array of songs in addition of the rating
+ */
 void print_songs(canzone* libreria, unsigned int size); //OK
+
+/* 
+func to print a good looking rating using stars
+rate: the actual rate of a song,a number between 1 and 5
+ */
+void print_rate(unsigned int rate); // OK
+
 int find_song(canzone* libreria, unsigned int size, const char *title); // OK
-void trim(char* str); // understand more
+
+/* 
+func trim used to clean a string from useless spaces
+str : input string
+ */
+void trim(char* str);
+
+/* 
+intro func to help the user to use this library
+ */
 void intro(); // OK
 
+//to do
 //funzione per applicare un filtro alla visualizzazione della libreria
 //filtro per: titolo,autore,genere,valutazione(crescente-decrescente)
 

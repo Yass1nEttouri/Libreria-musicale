@@ -82,13 +82,13 @@ canzone* add_new_song(canzone* libreria,unsigned int* size){
     return libreria;
 }
 
-canzone *delete_song(canzone* libreria,unsigned int* size, const char *title){
+canzone *delete_song(canzone* libreria,unsigned int* size, const char* title){
 
     if(libreria == NULL) return NULL;
 
     if(!find_song(libreria, *size, title)) return NULL;
 
-    for (int j = 0; j < (*size)- 1; j++) {
+    for (int j = 0; j < (*size)- 1; j++){
         libreria[j] = libreria[j + 1];
     }
     (*size)--;
@@ -96,7 +96,7 @@ canzone *delete_song(canzone* libreria,unsigned int* size, const char *title){
 }
 
 
-int find_song(canzone* libreria, unsigned int size,const char *title){
+int find_song(canzone* libreria, unsigned int size,const char* title){
 
     if(libreria == NULL) return -1;
 
@@ -108,7 +108,7 @@ int find_song(canzone* libreria, unsigned int size,const char *title){
 }
 
 
-canzone* rate_song(canzone* libreria, unsigned int size, const char *title){
+canzone* rate_song(canzone* libreria, unsigned int size, const char* title){
 
     if(libreria == NULL) return NULL;
 
@@ -128,17 +128,16 @@ canzone* rate_song(canzone* libreria, unsigned int size, const char *title){
 }
 
 void trim(char* str) {
-    char* end;
+    if (str == NULL || *str == '\0') return; 
 
-    // Rimuove spazi iniziali
-    while (*str == ' ') str++;
+    char *start = str;               
+    while (*start == ' ') start++;   
 
-    // Rimuove spazi finali
-    end = str + strlen(str) - 1;
-    while (end > str && *end == ' ') end--;
+    char *end = start + strlen(start) - 1; 
+    while (end > start && *end == ' ') end--; 
+    *(end + 1) = '\0';              
 
-    // Aggiunge il terminatore
-    *(end + 1) = '\0';
+    memmove(str, start, strlen(start) + 1); 
 }
 
 bool import_library(canzone* libreria, unsigned int* size, const char* file_name){
@@ -160,9 +159,8 @@ bool import_library(canzone* libreria, unsigned int* size, const char* file_name
         return false;
     }
 
-    char buffer[500]; // Buffer per una riga intera
-    while (*size < CAPACITY && fgets(buffer, sizeof(buffer), file) != NULL) {
-        // Parsing della riga
+    char buffer[500]; 
+    while (*size < CAPACITY && fgets(buffer, sizeof(buffer), file) != NULL){
         if (sscanf(buffer, "%*d. %49[^b] by %49[^()] (%f minutes) - %49[^\n]\n",
                    libreria[*size].titolo,
                    libreria[*size].autore,
@@ -174,17 +172,9 @@ bool import_library(canzone* libreria, unsigned int* size, const char* file_name
             trim(libreria[*size].genere);
 
             (*size)++;
-        } else {
+        }else
             printf("Errore nella lettura della riga: %s\n", buffer);
-        }
     }
-/*     while( (*size) < CAPACITY && fscanf(file, "%*d. %49[^b] by %49[^()] (%f minutes) - %29[^\n]\n",
-        libreria[*size].titolo, 
-        libreria[*size].autore, 
-        &libreria[*size].durata, 
-        libreria[*size].genere) == 4){
-            (*size)++;
-    } */
     fclose(file);
     return true;
 }
