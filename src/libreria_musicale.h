@@ -18,12 +18,17 @@ struct song{
     char titolo[40];
     char autore[40];
     char genere[30];
+    bool (*ptr_check_favorite)(char*); // make it work
     rating valutazione;
     minutes durata;
 };
 
+//to do
+//add a list to contain favorite songs
+// data structure : linked list? queue?
+
 /* 
-Comment about functions implemented
+Comments about functions implemented
 
 libreria : array of songs representing a library
 size: size of array starting from 0
@@ -35,7 +40,7 @@ size : current size of libreria + 1 -> index of the next song which needs to be 
  */
 canzone* add_new_song(canzone* libreria,unsigned int* size); // OK
 
-canzone* delete_song(canzone* libreria,unsigned int* size, const char *title); // fix logica
+canzone* delete_song(canzone* libreria,unsigned int* size, const char *title); // OK
 
 /* 
 func used to rate a specific song in libreria given the title of the song
@@ -43,8 +48,8 @@ title: title of the song to add a rating on
  */
 canzone* rate_song(canzone* libreria, unsigned int size, const char *title); // OK
 
-bool import_library(canzone* libreria, unsigned int* size, const char* file_name); // fix logica
-bool export_library(canzone* libreria, unsigned int size,const char* file_name); // review
+bool import_library(canzone* libreria, unsigned int* size, const char* file_name); // OK
+bool export_library(canzone* libreria, unsigned int size,const char* file_name); // OK
 
 /* 
 simple func to print the array of songs in addition of the rating
@@ -73,5 +78,14 @@ void intro(); // OK
 //to do
 //funzione per applicare un filtro alla visualizzazione della libreria
 //filtro per: titolo,autore,genere,valutazione(crescente-decrescente)
+
+//implementazione di una funzione per ordinare la libreria in base a un criterio scelto dall'utente indipendentemente dal tipo del parametro passaato alla funzione
+//criteri: titolo,autore,genere,valutazione,durata
+void sort_library(canzone* libreria, unsigned int size, int criterio, char* asc_desc);
+
+/* 
+Comments about list of favorite songs
+.....
+ */
 
 #endif

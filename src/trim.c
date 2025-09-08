@@ -20,6 +20,5 @@ int main() {
   trim(str);
   printf("trim:%s\n",str);
   
-
   return 0;
 }

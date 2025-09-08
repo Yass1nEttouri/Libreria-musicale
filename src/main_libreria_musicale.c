@@ -4,22 +4,22 @@
 
 int main(){
 
-    intro();
-
     int scelta;
     char title[30];
     canzone* libreria;
     unsigned int currentSize = 0;
     char file[40];
+
     libreria = (canzone *)malloc(CAPACITY * sizeof(canzone));
     if(libreria == NULL){
-        printf("Errore: allocazione liibreria fallita.\n");
+        printf("Errore: allocazione libreria fallita.\n");
         return -1;
     }
 
     //init_library(libreria, currentSize, "", "", "", 0.0);
-
+    printf("\nBenvenuto nella libreria musicale!\n");
     do{
+        intro();
         printf("\n");
         printf("Scegli un'opzione:");
         scanf("%d",&scelta);
@@ -78,6 +78,20 @@ int main(){
             break;
 
             case 7:
+                int criterio = 0;
+                char ascDesc[4];
+                printf("\n");
+                printf("Inserisci il criterio di ordinamento(1-5): ");
+                scanf("%d",&criterio);
+                if(criterio == 4 || criterio == 5){
+                    printf("Inserisci tipo ordinamento crescente/decrescente - asc/desc:");
+                    scanf("%4s",ascDesc);
+                }
+                printf("critero:%s\n",ascDesc);
+                sort_library(libreria, currentSize, criterio, ascDesc);                   
+            break;
+
+            case 8:
                 printf("\n");
                 printf("Inserisci il titolo del brano da valutare:");
                 scanf("%29s",title);
@@ -85,13 +99,14 @@ int main(){
                     printf("Brano valutato con successo\n");
                 else    
                     printf("Errore: il brano non è stato valutato\n");
+
             break;
 
             default:
                 printf("...\n");
             break;
         }
-    }while(scelta != 8);
+    }while(scelta != 9);
     free(libreria);
     printf("Uscita dal programma...\n");
     printf("Memoria liberata.\n");
