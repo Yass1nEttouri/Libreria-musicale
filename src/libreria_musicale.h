@@ -23,7 +23,7 @@ typedef struct song canzone;
 struct song{
     char titolo[40];
     char autore[40];
-    char genere[30];
+    char genere[20];
     rating valutazione;
     minutes durata;
 };
@@ -78,15 +78,14 @@ str : input string
 void trim(char* str);
 
 
-//to do
-//funzione per applicare un filtro alla visualizzazione della libreria
-//filtro per: titolo,autore,genere,valutazione(crescente-decrescente)
-
-// Implementation of a function to sort the library based on a criterion chosen by the user.
+//Implementation of a function to sort the library based on a criterion chosen by the user.
 // Criteria: title, author, genre, rating, duration
 void sort_library(canzone* libreria, unsigned int size, int criterio, char* asc_desc);
 
-
+/*
+func to edit song information given song index and field number
+*/
+bool edit_song_info(canzone* libreria, unsigned int songIndex, unsigned int field);
 
 
 

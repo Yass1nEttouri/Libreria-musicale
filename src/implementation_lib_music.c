@@ -11,13 +11,17 @@ void intro() {
     printf("2. Cerca un brano\n");
     printf("3. Aggiungi un brano\n");
     printf("4. Rimuovi un brano\n");
-    printf("5. Importa libreria\n");
-    printf("6. Esporta libreria\n");
-    printf("7. Ordina canzoni per:\n");
+    printf("5. Modifica informazioni canzone\n");
+    printf(" 1-titolo\n 2-autore\n 3-genere\n 4-valutazione\n 5-durata\n");
+    printf("6. Importa libreria\n");
+    printf("7. Esporta libreria\n");
+    printf("8. Ordina canzoni per:\n");
     printf(" 1-titolo\n 2-autore\n 3-genere\n 4-valutazione(asc o desc)\n 5-durata(asc o desc)\n");
-    printf("8. Assegna una valutazione ad una canzone\n");
-    printf("9. Esci\n");
+    printf("9. Assegna una valutazione ad una canzone\n");
+    printf("10. Esci\n");
 }
+
+bool check_range(unsigned int rate, unsigned int a, unsigned int b) {return (rate >= a && rate <= b);}
 
 void print_rate(unsigned int rate) {
     for (int i = 0; i < rate; i++) {
@@ -77,7 +81,7 @@ canzone* add_new_song(canzone* libreria,unsigned int* size){
         printf("Inserisci durata(in minuti):");
         scanf("%f",&libreria[*size].durata);
         printf("Inserisci il genere della canzone:");
-        scanf("%39s",libreria[*size].genere);
+        scanf("%19s",libreria[*size].genere);
     }while(find_song(libreria, *size, libreria[*size].titolo) != -1);
 
     (*size)++;
@@ -102,7 +106,6 @@ canzone *delete_song(canzone* libreria,unsigned int* size, const char* title){
     return libreria;
 }
 
-
 int find_song(canzone* libreria, unsigned int size,const char* title){
 
     if(libreria == NULL) return -1;
@@ -113,7 +116,6 @@ int find_song(canzone* libreria, unsigned int size,const char* title){
     return -1;
 }
 
-
 canzone* rate_song(canzone* libreria, unsigned int size, const char* title){
 
     if(libreria == NULL) return NULL;
@@ -121,14 +123,14 @@ canzone* rate_song(canzone* libreria, unsigned int size, const char* title){
     int index = find_song(libreria, size, title);
     if(index == -1) return NULL;
 
-    int value = 1;
+    int value;
     do{
-        if((value < 1 || value > 5))
-            printf("Valutazione non valida riprova\n");
-        printf("Assegna una valutazione alla canzone (1-5):");
-        scanf("%d",&libreria[index].valutazione);
-        int value = libreria[index].valutazione;
-    }while(!(value >= 1 && value<=5));
+        printf("Assegna una valutazione alla canzone (1-5): ");
+        scanf("%d", &value);
+        if(!check_range(value, 1, 5))
+            printf("Valutazione non valida, riprova\n");
+    }while(!check_range(value, 1, 5));
+    libreria[index].valutazione = value;
     
     return libreria;
 }
@@ -205,6 +207,12 @@ bool import_library(canzone* libreria, unsigned int* size, const char* file_name
 
         // titolo = da after_number fino a pos_by
         *pos_by = '\0';
+        // se il titolo inizia e finisce con " allora sono da rimuovere
+        if (after_number[0] == '"' && after_number[strlen(after_number) - 1] == '"') {
+            after_number[strlen(after_number) - 1] = '\0'; // rimuovere l'ultima "
+            after_number++; // salta la prima "
+        }
+
         strcpy(libreria[*size].titolo, after_number);
 
         // dopo "by" c’è l’autore fino a "("
@@ -215,7 +223,7 @@ bool import_library(canzone* libreria, unsigned int* size, const char* file_name
         }
         *pos_paren = '\0';
         strcpy(libreria[*size].autore, pos_by + 4);
-
+        
         // Durata dentro "(X.YY minutes)"
         float durata = 0.0f;
         if (sscanf(pos_paren + 1, "%f minutes)", &durata) != 1) {
@@ -242,8 +250,6 @@ bool import_library(canzone* libreria, unsigned int* size, const char* file_name
     fclose(file);
     return true;
 }
-
-
 bool export_library(canzone* libreria,unsigned int size, const char* file_name){
 
     if(libreria == NULL) return false;
@@ -289,7 +295,6 @@ void sort_library(canzone* libreria, unsigned int size, int criterio, char* asc_
     }
     for (unsigned int i = 0; i < size - 1; i++) {
         for (unsigned int j = 0; j < size - i - 1; j++) {
-            //criterio = 4 - asc
             if (compare_songs(&libreria[j], &libreria[j + 1], criterio, asc_desc) > 0) {
                 canzone temp = libreria[j];
                 libreria[j] = libreria[j + 1];
@@ -299,6 +304,34 @@ void sort_library(canzone* libreria, unsigned int size, int criterio, char* asc_
     }
 }
 
+bool edit_song_info(canzone* libreria, unsigned int songIndex, unsigned int field) {
 
+    if (libreria == NULL || !(field >= 1 && field <= 5)) return false;
+
+    const char* prompts[] = {
+        "Inserisci il nuovo titolo: ",
+        "Inserisci il nuovo autore: ",
+        "Inserisci il nuovo genere: ",
+        "Inserisci la nuova valutazione(1-5): ",
+        "Inserisci la nuova durata(in minuti): "
+    };
+
+    printf("%s", prompts[field - 1]);
+    switch (field) {
+        case 1: scanf("%39s", libreria[songIndex].titolo); break;
+        case 2: scanf("%39s", libreria[songIndex].autore); break;
+        case 3: scanf("%19s", libreria[songIndex].genere); break;
+        case 4:
+            scanf("%u", &libreria[songIndex].valutazione); 
+            if(check_range(libreria[songIndex].valutazione, 1, 5)) 
+                break;
+            else{
+                printf("Errore: valutazione inserita non valida.\n");
+                return false;
+            }
+        case 5: scanf("%f", &libreria[songIndex].durata); break;
+    }
+    return true;
+}
 
 

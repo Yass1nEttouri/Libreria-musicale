@@ -58,6 +58,20 @@ int main(){
             break;
 
             case 5:
+                int campo = 0;
+                int indiceBrano = 0;
+                printf("\n");
+                printf("Inserisci l'indice del brano da modificare:");
+                scanf("%d",&indiceBrano);
+                printf("Inserisci il campo che vorresti modificare(1-5):");
+                scanf("%d",&campo);
+                if(edit_song_info(libreria, indiceBrano, campo))
+                    printf("Informazioni modificate con successo\n");
+                else
+                    printf("Errore: modifica informazioni canzone fallita.");
+            break;
+            
+            case 6:
                 printf("\n");
                 printf("Inserisci il nome del file dal quale importare la libreria\n");
                 scanf("%39s",file);
@@ -67,7 +81,7 @@ int main(){
                     printf("Errore: libreria non importata.");
             break;
 
-            case 6:
+            case 7:
                 printf("\n");
                 printf("Inserisci il nome del file nel quale esportare la libreria\n");
                 scanf("%39s",file);
@@ -77,7 +91,7 @@ int main(){
                     printf("Errore: libreria non esportata.");
             break;
 
-            case 7:
+            case 8:
                 int criterio = 0;
                 char ascDesc[4];
                 printf("\n");
@@ -91,7 +105,7 @@ int main(){
                 sort_library(libreria, currentSize, criterio, ascDesc);                   
             break;
 
-            case 8:
+            case 9:
                 printf("\n");
                 printf("Inserisci il titolo del brano da valutare:");
                 scanf("%29s",title);
@@ -102,16 +116,11 @@ int main(){
 
             break;
 
-            case 9:
-                
-
-            break;
-
             default:
                 printf("...\n");
             break;
         }
-    }while(scelta != 9);
+    }while(scelta != 10);
     free(libreria);
     printf("Uscita dal programma...\n");
     printf("Memoria liberata.\n");
