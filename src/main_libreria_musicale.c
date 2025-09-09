@@ -102,6 +102,11 @@ int main(){
 
             break;
 
+            case 9:
+                
+
+            break;
+
             default:
                 printf("...\n");
             break;

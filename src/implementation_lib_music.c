@@ -145,27 +145,7 @@ void trim(char* str) {
 
     memmove(str, start, strlen(start) + 1); 
 }
-
-bool import_library(canzone* libreria, unsigned int* size, const char* file_name){
-
-    if(libreria == NULL) return false;
-
-    char title[30];
-    char autor[30];
-    char genre[30];
-    int number;
-    unsigned int duration;
-
-    FILE *file;
-    char pathname[200] = "/home/yassine/Scrivania/Primo-anno/PROG-2/project_libreria_musicale/";
-    strcat(pathname, file_name);
-    file = fopen(pathname,"r");
-    if(file == NULL){
-        perror("Errore: apertura del file.\n");
-        return false;
-    }
-
-/*     char buffer[500]; 
+    /* char buffer[500]; 
     while (*size < CAPACITY && fgets(buffer, sizeof(buffer), file) != NULL){
         if (sscanf(buffer, "%*d. %49[^'] by %49[^()] (%f minutes) - %49[^\n]\n",
                    libreria[*size].titolo,
@@ -181,9 +161,28 @@ bool import_library(canzone* libreria, unsigned int* size, const char* file_name
         }else
             printf("Errore nella lettura della riga: %s\n", buffer);
     } */
-   
-    char buffer[500];
 
+bool import_library(canzone* libreria, unsigned int* size, const char* file_name){
+
+    if(libreria == NULL) return false;
+
+    FILE *file;
+    char pathname[PATH_MAX];
+    //strcat(pathname, file_name);
+    //use snprintf for better destination buffer size control and to prevent overflow
+    if(snprintf(pathname, sizeof(pathname),
+    "/home/yassine/Scrivania/Primo-anno/PROG-2/project_libreria_musicale/%s",
+    file_name) < 0){
+        perror("Errore nella creazione del percorso\n");
+        return false;
+    }
+    file = fopen(pathname,"r");
+    if(file == NULL){
+        perror("Errore: apertura del file.\n");
+        return false;
+    }
+
+    char buffer[LINE_MAX];
     while (*size < CAPACITY && fgets(buffer, sizeof(buffer), file) != NULL) {
 
         // rimozione \n finale
@@ -244,6 +243,7 @@ bool import_library(canzone* libreria, unsigned int* size, const char* file_name
     return true;
 }
 
+
 bool export_library(canzone* libreria,unsigned int size, const char* file_name){
 
     if(libreria == NULL) return false;
@@ -269,58 +269,28 @@ bool export_library(canzone* libreria,unsigned int size, const char* file_name){
     fclose(file);
     return true;
 }
-//criterio in inglese 
-void sort_library(canzone* libreria, unsigned int size, int criterio, char* asc_desc){
-    if (libreria == NULL || size == 0) return;
 
+int compare_songs(const canzone* a, const canzone* b, int criterio, const char* asc_desc) {
+    //variable dir to handle asc and desc sorting
+    int dir = (asc_desc && strcmp(asc_desc, "desc") == 0) ? -1 : 1;
+    switch (criterio) {
+        case 1: return dir * strcmp(a->titolo, b->titolo);
+        case 2: return dir * strcmp(a->autore, b->autore);
+        case 3: return dir * strcmp(a->genere, b->genere);
+        case 4: return dir * (a->valutazione - b->valutazione); 
+        case 5: return dir * ((a->durata > b->durata) - (a->durata < b->durata));
+        default: return 0;
+    }
+}
+void sort_library(canzone* libreria, unsigned int size, int criterio, char* asc_desc) {
+    if (!libreria || size == 0) {
+        printf("Errore: libreria vuota o inesistente.\n");
+        return;
+    }
     for (unsigned int i = 0; i < size - 1; i++) {
         for (unsigned int j = 0; j < size - i - 1; j++) {
-            bool swap = false;
-            switch (criterio) {
-
-                case 1: // titolo
-                    if (strcmp(libreria[j].titolo, libreria[j + 1].titolo) > 0) swap = true;
-                    break;
-
-                case 2: // autore
-                    if (strcmp(libreria[j].autore, libreria[j + 1].autore) > 0) swap = true;
-                    break;
-
-                case 3: // genere
-                    if (strcmp(libreria[j].genere, libreria[j + 1].genere) > 0) swap = true;
-                    break;
-
-                case 4: // valutazione
-                    if(asc_desc == "asc"){
-                        if (libreria[j].valutazione > libreria[j + 1].valutazione) swap = true;
-                        else swap = false;
-                    }else if(asc_desc == "desc"){
-                        if (libreria[j].valutazione < libreria[j + 1].valutazione) swap = true;
-                        else swap = false;
-                    }else{
-                        printf("Errore: tipo di ordinamento non valido (opzioni: asc oppure desc)\n");
-                        return;
-                    }
-                    break;
-
-                case 5: // durata
-                    if(asc_desc == "asc"){
-                        if (libreria[j].durata > libreria[j + 1].durata) swap = true;
-                        else swap = false;
-                    }else if(asc_desc == "desc"){
-                        if (libreria[j].durata < libreria[j + 1].durata) swap = true;
-                        else swap = false;
-                    }else{
-                        printf("Errore: tipo di ordinamento non valido (opzioni: asc oppure desc)\n");
-                        return;
-                    }
-                    break;
-
-                default:
-                    printf("Criterio non valido.\n");
-                    return;
-            }
-            if (swap) {
+            //criterio = 4 - asc
+            if (compare_songs(&libreria[j], &libreria[j + 1], criterio, asc_desc) > 0) {
                 canzone temp = libreria[j];
                 libreria[j] = libreria[j + 1];
                 libreria[j + 1] = temp;
@@ -328,13 +298,6 @@ void sort_library(canzone* libreria, unsigned int size, int criterio, char* asc_
         }
     }
 }
-
-// Favorite list operations : 
-
-// func add to favorites
-// func remove from favorites
-// func check presence of a specific song in the list
-// func clear the list
 
 
 
