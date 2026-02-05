@@ -121,6 +121,7 @@ int main(){
             break;
         }
     }while(scelta != 10);
+    
     free(libreria);
     printf("Uscita dal programma...\n");
     printf("Memoria liberata.\n");

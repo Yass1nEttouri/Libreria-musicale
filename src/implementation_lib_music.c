@@ -21,7 +21,9 @@ void intro() {
     printf("10. Esci\n");
 }
 
-bool check_range(unsigned int rate, unsigned int a, unsigned int b) {return (rate >= a && rate <= b);}
+bool check_range(unsigned int rate, unsigned int a, unsigned int b) {
+    return (rate >= a && rate <= b);
+}
 
 void print_rate(unsigned int rate) {
     for (int i = 0; i < rate; i++) {
@@ -111,7 +113,7 @@ int find_song(canzone* libreria, unsigned int size,const char* title){
     if(libreria == NULL) return -1;
 
     for(int i=0; i<size; i++){
-        if(strcmp(libreria[i].titolo,title) == 0) return i;
+        if(strcmp(libreria[i].titolo, title) == 0) return i;
     }
     return -1;
 }
@@ -147,44 +149,27 @@ void trim(char* str) {
 
     memmove(str, start, strlen(start) + 1); 
 }
-    /* char buffer[500]; 
-    while (*size < CAPACITY && fgets(buffer, sizeof(buffer), file) != NULL){
-        if (sscanf(buffer, "%*d. %49[^'] by %49[^()] (%f minutes) - %49[^\n]\n",
-                   libreria[*size].titolo,
-                   libreria[*size].autore,
-                   &libreria[*size].durata,
-                   libreria[*size].genere) == 4) {
-            // removing excessive spaces in strings
-            trim(libreria[*size].titolo);
-            trim(libreria[*size].autore);
-            trim(libreria[*size].genere);
+/* char buffer[500]; 
+while (*size < CAPACITY && fgets(buffer, sizeof(buffer), file) != NULL){
+    if (sscanf(buffer, "%*d. %49[^'] by %49[^()] (%f minutes) - %49[^\n]\n",
+                libreria[*size].titolo,
+                libreria[*size].autore,
+                &libreria[*size].durata,
+                libreria[*size].genere) == 4) {
+        // removing excessive spaces in strings
+        trim(libreria[*size].titolo);
+        trim(libreria[*size].autore);
+        trim(libreria[*size].genere);
 
-            (*size)++;
-        }else
-            printf("Errore nella lettura della riga: %s\n", buffer);
-    } */
+        (*size)++;
+    }else
+        printf("Errore nella lettura della riga: %s\n", buffer);
+} */
 
-bool import_library(canzone* libreria, unsigned int* size, const char* file_name){
-
-    if(libreria == NULL) return false;
-
-    FILE *file;
-    char pathname[PATH_MAX];
-    //strcat(pathname, file_name);
-    //use snprintf for better destination buffer size control and to prevent overflow
-    if(snprintf(pathname, sizeof(pathname),
-    "/home/yassine/Scrivania/Primo-anno/PROG-2/project_libreria_musicale/%s",
-    file_name) < 0){
-        perror("Errore nella creazione del percorso\n");
-        return false;
-    }
-    file = fopen(pathname,"r");
-    if(file == NULL){
-        perror("Errore: apertura del file.\n");
-        return false;
-    }
+void exctract_song(canzone *libreria, unsigned int *size, FILE *file){
 
     char buffer[LINE_MAX];
+
     while (*size < CAPACITY && fgets(buffer, sizeof(buffer), file) != NULL) {
 
         // rimozione \n finale
@@ -247,6 +232,93 @@ bool import_library(canzone* libreria, unsigned int* size, const char* file_name
 
         (*size)++;
     }
+}
+
+bool import_library(canzone* libreria, unsigned int* size, const char* file_name){
+
+    if(libreria == NULL) return false;
+
+    FILE *file;
+    char pathname[PATH_MAX];
+    //strcat(pathname, file_name);
+    //using snprintf for better destination buffer size control and to prevent overflow
+    if(snprintf(pathname, sizeof(pathname),
+    "/home/yassine/Scrivania/Primo-anno/PROG-2/project_libreria_musicale/%s",
+    file_name) < 0){
+        perror("Errore nella creazione del percorso\n");
+        return false;
+    }
+    file = fopen(pathname,"r");
+    if(file == NULL){
+        perror("Errore: apertura del file.\n");
+        return false;
+    }
+
+    exctract_song(libreria, size, file);
+
+    /* char buffer[LINE_MAX];
+    while (*size < CAPACITY && fgets(buffer, sizeof(buffer), file) != NULL) {
+
+        // rimozione \n finale
+        buffer[strcspn(buffer, "\n")] = '\0';
+
+        // trovare il primo punto dopo l’indice (es: "1.")
+        char *after_number = strchr(buffer, '.');
+        if (!after_number) {
+            printf("Formato non valido: %s\n", buffer);
+            continue;
+        }
+        after_number += 2; // salta ". " e posizionati all’inizio del titolo
+
+        // trovare " by "
+        char *pos_by = strstr(after_number, " by ");
+        if (!pos_by) {
+            printf("Formato non valido (manca 'by'): %s\n", buffer);
+            continue;
+        }
+
+        // titolo = da after_number fino a pos_by
+        *pos_by = '\0';
+        // se il titolo inizia e finisce con " allora sono da rimuovere
+        if (after_number[0] == '"' && after_number[strlen(after_number) - 1] == '"') {
+            after_number[strlen(after_number) - 1] = '\0'; // rimuovere l'ultima "
+            after_number++; // salta la prima "
+        }
+
+        strcpy(libreria[*size].titolo, after_number);
+
+        // dopo "by" c’è l’autore fino a "("
+        char *pos_paren = strchr(pos_by + 4, '(');
+        if (!pos_paren) {
+            printf("Formato non valido (manca '('): %s\n", buffer);
+            continue;
+        }
+        *pos_paren = '\0';
+        strcpy(libreria[*size].autore, pos_by + 4);
+        
+        // Durata dentro "(X.YY minutes)"
+        float durata = 0.0f;
+        if (sscanf(pos_paren + 1, "%f minutes)", &durata) != 1) {
+            printf("Errore lettura durata: %s\n", buffer);
+            continue;
+        }
+        libreria[*size].durata = durata;
+
+        // Genere dopo il trattino "-"
+        char *pos_dash = strchr(pos_paren + 1, '-');
+        if (!pos_dash) {
+            printf("Formato non valido (manca '-'): %s\n", buffer);
+            continue;
+        }
+        strcpy(libreria[*size].genere, pos_dash + 2); // salta "- "
+
+        //rimozione spazi extra
+        trim(libreria[*size].titolo);
+        trim(libreria[*size].autore);
+        trim(libreria[*size].genere);
+
+        (*size)++;
+    } */
     fclose(file);
     return true;
 }

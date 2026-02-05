@@ -77,7 +77,6 @@ str : input string
  */
 void trim(char* str);
 
-
 //Implementation of a function to sort the library based on a criterion chosen by the user.
 // Criteria: title, author, genre, rating, duration
 void sort_library(canzone* libreria, unsigned int size, int criterio, char* asc_desc);
