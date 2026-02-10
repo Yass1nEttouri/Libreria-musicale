@@ -9,7 +9,7 @@ TARGET = $(BIN_DIR)/main_ex1
 SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRCS))
 
-.PHONY: src all clean
+.PHONY: src all clean clear
 
 src: $(TARGET)
 
@@ -26,6 +26,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)/*.exe $(BIN_DIR)/*.out $(TARGET)
 
-# Regola per eseguire il progetto
+clear:
+	rm -f $(OBJS) $(TARGET)
+
 run: $(TARGET)
 	./$(TARGET)
+

@@ -18,6 +18,7 @@ typedef float minutes;
 //definition of the rating data type for evaluating a song
 typedef unsigned int rating;
 
+
 //definition of the data structure for a song
 typedef struct song canzone;
 struct song{
@@ -28,6 +29,9 @@ struct song{
     minutes durata;
 };
 
+//todo:
+//aggiungere le playlist
+
 
 /* 
 Comments about functions implemented
@@ -37,6 +41,8 @@ size: size of array starting from 0
  */
 
 void intro();
+
+const char* get_song_name(canzone* libreria, unsigned int index);
 
 /* 
 func used to add a new song to the library 
@@ -89,3 +95,48 @@ bool edit_song_info(canzone* libreria, unsigned int songIndex, unsigned int fiel
 
 
 #endif
+
+/* Here are some useful expansions for your music library project:
+
+1. **Playlist Management**
+    - Create playlists containing multiple songs
+    - Add/remove songs from playlists
+    - Export/import playlists
+
+2. **Search & Filter Features**
+    - Search songs by artist, genre, or year
+    - Filter by rating range or duration
+    - Full-text search in song metadata
+
+3. **Statistics & Analytics**
+    - Total library duration
+    - Average rating per genre
+    - Most/least rated songs
+    - Genre distribution
+
+4. **Enhanced Data**
+    - Add release year, album name
+    - Track play count
+    - Add favorite/bookmark functionality
+    - User-defined tags or categories
+
+5. **User Management**
+    - Multiple user profiles with separate libraries
+    - Personalized ratings and favorites
+    - Export user preferences
+
+6. **Sorting & Organization**
+    - By multiple criteria simultaneously
+    - Grouped by genre/artist
+    - Recently added/modified
+
+7. **Data Persistence**
+    - Database integration (SQLite)
+    - Automatic backup functionality
+    - Configuration file for app settings
+
+8. **Recommendations**
+    - Suggest similar songs by genre/artist
+    - Top-rated recommendations
+
+I'd recommend starting with **search/filter features** and **statistics** as they add value with moderate complexity, then move to **playlist management** for a more feature-rich experience. */

@@ -1,14 +1,18 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "libreria_musicale.h"
+#include "music_library.h"
+#include "playlist.h"
+#include "globals.h"
 
 int main(){
 
     int scelta;
     char title[30];
-    canzone* libreria;
-    unsigned int currentSize = 0;
     char file[40];
+    int campo = 0;
+    int indiceBrano = 0;
+    int criterio = 0;
+    char ascDesc[4];
 
     libreria = (canzone *)malloc(CAPACITY * sizeof(canzone));
     if(libreria == NULL){
@@ -20,6 +24,7 @@ int main(){
     printf("\nBenvenuto nella libreria musicale!\n");
     do{
         intro();
+        intro_playlist();
         printf("\n");
         printf("Scegli un'opzione:");
         scanf("%d",&scelta);
@@ -58,8 +63,6 @@ int main(){
             break;
 
             case 5:
-                int campo = 0;
-                int indiceBrano = 0;
                 printf("\n");
                 printf("Inserisci l'indice del brano da modificare:");
                 scanf("%d",&indiceBrano);
@@ -92,16 +95,14 @@ int main(){
             break;
 
             case 8:
-                int criterio = 0;
-                char ascDesc[4];
                 printf("\n");
                 printf("Inserisci il criterio di ordinamento(1-5): ");
                 scanf("%d",&criterio);
+                ascDesc[0] = '\0';
                 if(criterio == 4 || criterio == 5){
                     printf("Inserisci tipo ordinamento crescente/decrescente - asc/desc:");
                     scanf("%4s",ascDesc);
                 }
-                printf("critero:%s\n",ascDesc);
                 sort_library(libreria, currentSize, criterio, ascDesc);                   
             break;
 
@@ -120,7 +121,7 @@ int main(){
                 printf("...\n");
             break;
         }
-    }while(scelta != 10);
+    }while(scelta != 15);
     
     free(libreria);
     printf("Uscita dal programma...\n");

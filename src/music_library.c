@@ -1,4 +1,4 @@
-#include "libreria_musicale.h"
+#include "music_library.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +18,6 @@ void intro() {
     printf("8. Ordina canzoni per:\n");
     printf(" 1-titolo\n 2-autore\n 3-genere\n 4-valutazione(asc o desc)\n 5-durata(asc o desc)\n");
     printf("9. Assegna una valutazione ad una canzone\n");
-    printf("10. Esci\n");
 }
 
 bool check_range(unsigned int rate, unsigned int a, unsigned int b) {
